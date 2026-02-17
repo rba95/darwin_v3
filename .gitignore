@@ -1,0 +1,16 @@
+# Python / Backend
+venv/
+__pycache__/
+*.pyc
+.env
+temp_dat.docx
+
+# React / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.vite/
+
+# OS
+.DS_Store
+Thumbs.db

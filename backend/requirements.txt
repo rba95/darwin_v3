@@ -1,0 +1,5 @@
+fastapi[standard]==0.115.8
+uvicorn[standard]==0.34.0
+docxtpl==0.16.7
+pydantic==2.10.6
+python-multipart==0.0.20
