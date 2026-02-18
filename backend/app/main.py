@@ -6,10 +6,10 @@ from app.api.v1.endpoints.generation import router as generation_router
 app = FastAPI(title="DARWIN API")
 
 # --- CONFIGURATION CORS ---
-# Indispensable pour que ton React (port 5173) puisse parler à FastAPI (port 8000)
+# Indispensable pour que ton React puisse parler à FastAPI
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], 
+    allow_origins=["*"],  # En dev, on autorise tout. En prod, spécifier les domaines
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -1,1 +1,51 @@
 @import "tailwindcss";
+
+/* Styles personnalisés pour DARWIN */
+
+/* Reset basique */
+* {
+    box-sizing: border-box;
+}
+
+/* Ajustements pour le DSFR */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Marianne', system-ui, -apple-system, sans-serif;
+    background-color: #F6F6F6;
+}
+
+#root {
+    min-height: 100vh;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    header, footer, nav {
+        display: none !important;
+    }
+}
