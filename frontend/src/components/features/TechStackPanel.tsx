@@ -78,12 +78,12 @@ type TechCategory = keyof typeof TECH_CATALOG;
 
 export function TechStackPanel() {
   const { setValue, watch, getValues } = useFormContext<DatFormValues>();
-  
+
   const choixTechnologiques = watch("choix_technologiques") || [];
-  
+
   // State local pour les catégories ouvertes
   const [expandedCategories, setExpandedCategories] = useState<Set<TechCategory>>(new Set(["os"]));
-  
+
   // Utiliser useFieldArray pour une gestion plus stable
   const { fields, append, remove } = useFieldArray({
     name: "choix_technologiques",
@@ -103,8 +103,8 @@ export function TechStackPanel() {
 
   // Extraire les technologies sélectionnées depuis choix_technologiques
   const selectedTechs = useMemo(() => {
-    const techs: {category: TechCategory; name: string; version: string}[] = [];
-    
+    const techs: { category: TechCategory; name: string; version: string }[] = [];
+
     for (const choix of choixTechnologiques) {
       // Trouver la catégorie par le label
       for (const [cat, data] of Object.entries(TECH_CATALOG) as [TechCategory, typeof TECH_CATALOG[TechCategory]][]) {
@@ -118,21 +118,21 @@ export function TechStackPanel() {
         }
       }
     }
-    
+
     return techs;
   }, [choixTechnologiques]);
 
   const toggleTech = useCallback((category: TechCategory, name: string, version: string) => {
     const currentChoix = getValues("choix_technologiques") || [];
     const categoryLabel = TECH_CATALOG[category].label;
-    
+
     // Chercher si cette technologie existe déjà
     const existingIndex = currentChoix.findIndex(
       (c) => c.tiers === categoryLabel && c.produit === name
     );
-    
+
     let newChoix = [...currentChoix];
-    
+
     if (existingIndex >= 0) {
       // Si même version, supprimer
       if (currentChoix[existingIndex].version === version) {
@@ -149,22 +149,22 @@ export function TechStackPanel() {
         version
       });
     }
-    
+
     // Mettre à jour le formulaire
     setValue("choix_technologiques", newChoix, { shouldDirty: true });
-    
+
     // Si c'est un OS, mettre à jour les VMs
     if (category === "os") {
       const selectedOS = newChoix.find(c => c.tiers === TECH_CATALOG.os.label);
       const currentVMs = getValues("vms") || [];
-      
+
       if (selectedOS && currentVMs.length > 0) {
         const osValue = `${selectedOS.produit} ${selectedOS.version}`;
         const updatedVMs = currentVMs.map((vm) => {
-          if (!vm.os || vm.os === "Linux" || vm.os === "Windows Server" || 
-              vm.os.includes("Debian") || vm.os.includes("Ubuntu") ||
-              vm.os.includes("RHEL") || vm.os.includes("Rocky") ||
-              vm.os.includes("Alma")) {
+          if (!vm.os || vm.os === "Linux" || vm.os === "Windows Server" ||
+            vm.os.includes("Debian") || vm.os.includes("Ubuntu") ||
+            vm.os.includes("RHEL") || vm.os.includes("Rocky") ||
+            vm.os.includes("Alma")) {
             return { ...vm, os: osValue };
           }
           return vm;
@@ -177,11 +177,11 @@ export function TechStackPanel() {
   const removeTech = useCallback((category: TechCategory, name: string) => {
     const currentChoix = getValues("choix_technologiques") || [];
     const categoryLabel = TECH_CATALOG[category].label;
-    
+
     const newChoix = currentChoix.filter(
       (c) => !(c.tiers === categoryLabel && c.produit === name)
     );
-    
+
     setValue("choix_technologiques", newChoix, { shouldDirty: true });
   }, [getValues, setValue]);
 
@@ -207,17 +207,17 @@ export function TechStackPanel() {
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-          <Cpu className="w-5 h-5 text-purple-600" />
+          <Cpu className="w-5 h-5 !text-purple-600" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Stack Technologique</h3>
-          <p className="text-sm text-gray-500">Sélectionnez les technologies et versions utilisées</p>
+          <h3 className="!text-lg !font-semibold !text-gray-900">Stack Technologique</h3>
+          <p className="!text-sm !text-gray-500">Sélectionnez les technologies et versions utilisées</p>
         </div>
       </div>
 
       {/* Info box */}
       <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-        <p className="text-sm text-blue-800">
+        <p className="!text-sm !text-blue-800">
           <strong>Astuce :</strong> Les systèmes d'exploitation sélectionnés seront automatiquement appliqués aux VMs de l'étape Infrastructure.
         </p>
       </div>
@@ -252,7 +252,7 @@ export function TechStackPanel() {
         {(Object.entries(TECH_CATALOG) as [TechCategory, typeof TECH_CATALOG[TechCategory]][]).map(([category, data]) => {
           const expanded = expandedCategories.has(category);
           const countInCategory = selectedTechs.filter(t => t.category === category).length;
-          
+
           return (
             <div key={category} className="border-2 border-[#000091] rounded-lg overflow-hidden">
               {/* Category Header */}
@@ -282,14 +282,14 @@ export function TechStackPanel() {
                   {data.items.map((item) => {
                     const selected = isSelected(category, item.name);
                     const selectedVersion = getSelectedVersion(category, item.name);
-                    
+
                     return (
                       <div
                         key={`${category}-${item.name}`}
                         className={`
                           p-3 rounded-lg border-2 transition-all bg-white
-                          ${selected 
-                            ? 'border-[#000091] shadow-md' 
+                          ${selected
+                            ? 'border-[#000091] shadow-md'
                             : 'border-gray-300 hover:border-gray-400'
                           }
                         `}
@@ -340,16 +340,16 @@ export function TechStackPanel() {
           <Plus className="w-4 h-4" />
           Ajouter une technologie manuellement
         </button>
-        
+
         {/* Liste des entrées manuelles */}
         {fields.map((field, index) => {
           const choix = choixTechnologiques[index];
           // N'afficher que les entrées manuelles (sans catégorie correspondante)
           const categoryLabels = Object.values(TECH_CATALOG).map(c => c.label);
           const isManual = !categoryLabels.includes(choix?.tiers) || choix?.tiers === "";
-          
+
           if (!isManual) return null;
-          
+
           return (
             <div key={field.id} className="mt-4 flex gap-3 items-center">
               <input

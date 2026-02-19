@@ -224,66 +224,68 @@ export function DatStepper() {
 
           {/* Sidebar Navigation - Vertical Steps */}
           <aside className="hidden lg:block w-72 flex-shrink-0">
-            <nav className="bg-[#000091] rounded-xl p-3 sticky top-8 shadow-lg">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wide mb-3 px-2">
-                Étapes
+            <nav className="bg-[#000091] rounded-xl p-3 sticky top-8 shadow-lg border border-gray-200">
+              <h2 className="!text-white font-bold uppercase tracking-wide mb-4 px-2">
+                Section
               </h2>
-              <ul className="space-y-2">
+              <ul className="space-y-2 !text-white">
                 {STEPS.map((step) => {
                   const Icon = step.icon;
                   const isActive = currentStep === step.id;
                   const isCompleted = currentStep > step.id;
+
+                  // Définition propre des classes pour éviter les bugs Tailwind
+                  let buttonClass = "w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all duration-200 group ";
+                  let circleClass = "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-colors ";
+                  let titleClass = "font-semibold truncate transition-colors ";
+                  let descClass = "text-xs truncate transition-colors ";
+                  let iconClass = "w-5 h-5 flex-shrink-0 transition-colors ";
+
+                  if (isActive) {
+                    buttonClass += "!bg-white shadow-md";
+                    circleClass += "!bg-[#000091] !text-white";
+                    titleClass += "!text-[#000091]";
+                    descClass += "!text-[#000091]/80";
+                    iconClass += "!text-[#000091]";
+                  } else if (isCompleted) {
+                    buttonClass += "!bg-green-600 !hover:bg-green-700 shadow-md";
+                    circleClass += "!bg-white !text-green-700";
+                    titleClass += "!text-white";
+                    descClass += "!text-white/80";
+                    iconClass += "!text-white";
+                  } else {
+                    // C'est ici que la magie du survol opère : hover:bg-[#000091]
+                    buttonClass += "bg-transparent !hover:bg-white";
+                    circleClass += "!bg-[#000091] !text-white group-hover:!bg-[#000091] group-hover:text-[#000091]";
+                    titleClass += "!text-white group-hover:!text-[#000091]";
+                    descClass += "!text-white/80 group-hover:!text-[#000091]/80";
+                    iconClass += "!text-white group-hover:!text-[#000091]";
+                  }
 
                   return (
                     <li key={step.id}>
                       <button
                         type="button"
                         onClick={() => goToStep(step.id)}
-                        className={`
-                          w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all group
-                          ${isActive
-                            ? 'bg-white/10 text-blue-500 shadow-md'
-                            : isCompleted
-                              ? 'bg-transparent text-green-400 hover:bg-white'
-                              : 'bg-transparent text-white hover:bg-white'
-                          }
-                        `}
+                        className={buttonClass}
                       >
-                        <div className={`
-                          w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0
-                          ${isActive
-                            ? 'bg-white shadow-sm'
-                            : isCompleted
-                              ? 'bg-green-600 text-white'
-                              : 'bg-[#000091] text-white'
-                          }
-                        `}>
-                          {isCompleted ? <Check className="w-4 h-4" /> : step.id}
+                        {/* Cercle avec numéro ou icône Check */}
+                        <div className={circleClass}>
+                          {isCompleted ? <Check className="w-5 h-5" /> : step.id}
                         </div>
 
+                        {/* Textes (Titre et description) */}
                         <div className="flex-1 min-w-0">
-                          <div className={`font-semibold truncate transition-colors ${isActive
-                            ? 'text-[#000091]'
-                            : isCompleted
-                              ? 'text-green-400 group-hover:text-green-600'
-                              : 'text-white group-hover:text-[#000091]'
-                            }`}>
+                          <div className={titleClass}>
                             {step.name}
                           </div>
-                          <div className={`text-xs truncate transition-colors ${isActive
-                            ? 'text-white'
-                            : 'text-white group-hover:text-red-900' // Devient gris au survol
-                            }`}>
+                          <div className={descClass}>
                             {step.description}
                           </div>
                         </div>
 
-                        <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive
-                          ? 'text-[#000091]'
-                          : isCompleted
-                            ? 'text-green-500 group-hover:text-green-600'
-                            : 'text-white/70 group-hover:text-[#000091]'
-                          }`} />
+                        {/* Icône de droite */}
+                        <Icon className={iconClass} />
                       </button>
                     </li>
                   );
