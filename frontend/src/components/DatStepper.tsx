@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { downloadDat, previewDat, ExportFormat } from "../api/client";
-import { 
-  DatFormValues, 
+import {
+  DatFormValues,
   defaultDatFormValues,
   defaultActeur,
   defaultVM
 } from "../types/dat";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  FileDown, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileDown,
   Check,
   Info,
   Users,
@@ -54,9 +54,9 @@ const STEPS = [
 // Logo Darwin SVG
 const DarwinLogo = () => (
   <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none">
-    <rect width="40" height="40" rx="8" fill="#000091"/>
-    <path d="M10 12h6c4 0 7 3 7 8s-3 8-7 8h-6V12zm6 12c2.5 0 4-2 4-4s-1.5-4-4-4h-2v8h2z" fill="white"/>
-    <circle cx="28" cy="20" r="4" fill="#E1000F"/>
+    <rect width="40" height="40" rx="8" fill="#000091" />
+    <path d="M10 12h6c4 0 7 3 7 8s-3 8-7 8h-6V12zm6 12c2.5 0 4-2 4-4s-1.5-4-4-4h-2v8h2z" fill="white" />
+    <circle cx="28" cy="20" r="4" fill="#E1000F" />
   </svg>
 );
 
@@ -84,14 +84,14 @@ export function DatStepper() {
     setIsGenerating(true);
     setError(null);
     setSuccess(false);
-    
+
     try {
       const data = methods.getValues();
       const blob = await downloadDat(data, format);
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement('a');
       link.href = url;
-      
+
       const extension = format;
       link.setAttribute('download', `DAT_${data.titre_projet || 'document'}.${extension}`);
       document.body.appendChild(link);
@@ -119,7 +119,7 @@ export function DatStepper() {
   const showPreview = async () => {
     setIsPreviewing(true);
     setError(null);
-    
+
     try {
       const data = methods.getValues();
       const url = await previewDat(data);
@@ -178,12 +178,12 @@ export function DatStepper() {
                 </p>
               </div>
             </div>
-            
+
             {/* Progress indicator */}
             <div className="hidden md:flex items-center gap-3">
               <span className="text-sm text-gray-500">Progression :</span>
               <div className="w-40 h-3 bg-gray-200 rounded-full overflow-hidden border border-gray-300">
-                <div 
+                <div
                   className="h-full bg-[#000091] transition-all duration-300 rounded-full"
                   style={{ width: `${completionPercentage}%` }}
                 />
@@ -221,7 +221,7 @@ export function DatStepper() {
       {/* Main Layout */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex gap-8">
-          
+
           {/* Sidebar Navigation - Vertical Steps */}
           <aside className="hidden lg:block w-72 flex-shrink-0">
             <nav className="bg-[#000091] rounded-xl p-3 sticky top-8 shadow-lg">
@@ -233,42 +233,57 @@ export function DatStepper() {
                   const Icon = step.icon;
                   const isActive = currentStep === step.id;
                   const isCompleted = currentStep > step.id;
-                  
+
                   return (
                     <li key={step.id}>
                       <button
                         type="button"
                         onClick={() => goToStep(step.id)}
                         className={`
-                          w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all
-                          ${isActive 
-                            ? 'bg-white text-[#000091] shadow-md' 
-                            : isCompleted 
-                              ? 'bg-white text-green-600 hover:bg-gray-100' 
-                              : 'bg-white text-gray-800 hover:bg-gray-100'
+                          w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all group
+                          ${isActive
+                            ? 'bg-white/10 text-blue-500 shadow-md'
+                            : isCompleted
+                              ? 'bg-transparent text-green-400 hover:bg-white'
+                              : 'bg-transparent text-white hover:bg-white'
                           }
                         `}
                       >
                         <div className={`
                           w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0
-                          ${isActive 
-                            ? 'bg-[#000091] text-white' 
-                            : isCompleted 
-                              ? 'bg-green-500 text-white' 
+                          ${isActive
+                            ? 'bg-white shadow-sm'
+                            : isCompleted
+                              ? 'bg-green-600 text-white'
                               : 'bg-[#000091] text-white'
                           }
                         `}>
                           {isCompleted ? <Check className="w-4 h-4" /> : step.id}
                         </div>
+
                         <div className="flex-1 min-w-0">
-                          <div className={`font-semibold truncate ${isActive ? 'text-[#000091]' : isCompleted ? 'text-green-600' : 'text-gray-800'}`}>
+                          <div className={`font-semibold truncate transition-colors ${isActive
+                            ? 'text-[#000091]'
+                            : isCompleted
+                              ? 'text-green-400 group-hover:text-green-600'
+                              : 'text-white group-hover:text-[#000091]'
+                            }`}>
                             {step.name}
                           </div>
-                          <div className="text-xs truncate text-gray-500">
+                          <div className={`text-xs truncate transition-colors ${isActive
+                            ? 'text-white'
+                            : 'text-white group-hover:text-red-900' // Devient gris au survol
+                            }`}>
                             {step.description}
                           </div>
                         </div>
-                        <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-[#000091]' : isCompleted ? 'text-green-500' : 'text-gray-400'}`} />
+
+                        <Icon className={`w-4 h-4 flex-shrink-0 transition-colors ${isActive
+                          ? 'text-[#000091]'
+                          : isCompleted
+                            ? 'text-green-500 group-hover:text-green-600'
+                            : 'text-white/70 group-hover:text-[#000091]'
+                          }`} />
                       </button>
                     </li>
                   );
@@ -296,7 +311,7 @@ export function DatStepper() {
           <main className="flex-1 min-w-0">
             <FormProvider {...methods}>
               <form onSubmit={(e) => e.preventDefault()}>
-                
+
                 {/* Step Content Card */}
                 <div className="bg-white rounded-lg border border-gray-200 shadow-md overflow-hidden">
                   {/* Step Header */}
@@ -357,8 +372,8 @@ export function DatStepper() {
                     disabled={currentStep === 1}
                     className={`
                       inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all border-2
-                      ${currentStep === 1 
-                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
+                      ${currentStep === 1
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                         : 'bg-white text-[#000091] border-[#000091] hover:bg-blue-50'
                       }
                     `}
@@ -388,17 +403,17 @@ export function DatStepper() {
 }
 
 // Composant Input personnalisé avec bordure grise
-function FormInput({ 
-  label, 
-  name, 
-  register, 
-  placeholder, 
+function FormInput({
+  label,
+  name,
+  register,
+  placeholder,
   required = false,
   type = "text"
-}: { 
-  label: string; 
-  name: string; 
-  register: ReturnType<typeof useForm<DatFormValues>>['register']; 
+}: {
+  label: string;
+  name: string;
+  register: ReturnType<typeof useForm<DatFormValues>>['register'];
   placeholder?: string;
   required?: boolean;
   type?: string;
@@ -431,7 +446,7 @@ interface Step9Props {
 
 // Rendu du contenu de chaque étape
 function renderStepContent(
-  step: number, 
+  step: number,
   methods: ReturnType<typeof useForm<DatFormValues>>,
   control: ReturnType<typeof useForm<DatFormValues>>['control'],
   step9Props?: Step9Props
@@ -517,7 +532,7 @@ function renderStepContent(
                 Inclure un schéma fonctionnel
               </label>
             </div>
-            
+
             {watch("has_schema") && (
               <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
                 <p className="text-blue-800">
@@ -741,11 +756,11 @@ function renderStepContent(
 
     case 9: // Validation
       if (!step9Props) return null;
-      
-      const { 
-        selectedFormat, 
-        setSelectedFormat, 
-        generateDocument, 
+
+      const {
+        selectedFormat,
+        setSelectedFormat,
+        generateDocument,
         showPreview,
         isGenerating,
         isPreviewing,
@@ -797,7 +812,7 @@ function renderStepContent(
               ].map((format) => {
                 const Icon = format.icon;
                 const isSelected = selectedFormat === format.value;
-                
+
                 return (
                   <button
                     key={format.value}
@@ -805,8 +820,8 @@ function renderStepContent(
                     onClick={() => setSelectedFormat(format.value)}
                     className={`
                       p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2
-                      ${isSelected 
-                        ? 'border-[#000091] bg-blue-50 shadow-md' 
+                      ${isSelected
+                        ? 'border-[#000091] bg-blue-50 shadow-md'
                         : 'border-gray-300 hover:border-gray-400'
                       }
                     `}
@@ -833,8 +848,8 @@ function renderStepContent(
               disabled={isPreviewing}
               className={`
                 flex-1 inline-flex items-center justify-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all border-2
-                ${isPreviewing 
-                  ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-wait' 
+                ${isPreviewing
+                  ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-wait'
                   : 'bg-white text-[#000091] border-[#000091] hover:bg-blue-50'
                 }
               `}
@@ -859,8 +874,8 @@ function renderStepContent(
               disabled={isGenerating}
               className={`
                 flex-1 inline-flex items-center justify-center gap-3 px-6 py-4 rounded-lg font-semibold transition-all
-                ${isGenerating 
-                  ? 'bg-gray-400 text-white cursor-wait' 
+                ${isGenerating
+                  ? 'bg-gray-400 text-white cursor-wait'
                   : 'bg-green-600 text-white hover:bg-green-700'
                 }
               `}
@@ -888,7 +903,7 @@ function renderStepContent(
               </div>
             </div>
           )}
-          
+
           {success && (
             <div className="p-5 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
               <div className="flex items-center gap-3">
